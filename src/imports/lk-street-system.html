@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LK Street - Sistema</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:40px;
+}
+
+.container{
+    display:flex;
+    gap:30px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.phone{
+    width:300px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    overflow:hidden;
+}
+
+.header{
+    background:#0f4fa8;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.content{
+    padding:20px;
+}
+
+.card{
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+    color:white;
+    font-weight:bold;
+}
+
+.blue{background:#1e73d8;}
+.red{background:#e74c3c;}
+.green{background:#27ae60;}
+.orange{background:#f39c12;}
+
+.list{
+    margin-top:10px;
+}
+
+.list-item{
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+.input-group{
+    margin-bottom:12px;
+}
+
+input, select{
+    width:100%;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.btn-primary{
+    background:#0f4fa8;
+    color:white;
+}
+
+.btn-success{
+    background:#27ae60;
+    color:white;
+}
+
+.btn-warning{
+    background:#f39c12;
+    color:white;
+}
+
+.total{
+    font-size:18px;
+    font-weight:bold;
+    margin:10px 0;
+}
+
+.report-box{
+    background:#f4f6f9;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- DASHBOARD -->
+<div class="phone">
+<div class="header">LK Street - Dashboard</div>
+<div class="content">
+
+<div class="card blue">Faturamento: R$ 12.450</div>
+<div class="card red">Despesas: R$ 5.200</div>
+<div class="card green">Lucro Líquido: R$ 7.250</div>
+<div class="card orange">Vendas do Mês: 120</div>
+
+<h4 style="margin-top:15px;">Top Produtos</h4>
+<div class="list">
+<div class="list-item">1. Camisa Nike</div>
+<div class="list-item">2. Boné Preto</div>
+<div class="list-item">3. Shorts Jeans</div>
+</div>
+
+<button class="button btn-primary">Ver Relatório Completo</button>
+
+</div>
+</div>
+
+
+<!-- NOVA VENDA -->
+<div class="phone">
+<div class="header">Nova Venda</div>
+<div class="content">
+
+<div class="list-item">Camisa Nike - R$ 95,00</div>
+<div class="list-item">Boné Preto - R$ 29,00</div>
+<div class="list-item">Shorts Jeans - R$ 75,00</div>
+
+<div class="input-group">
+<label>Quantidade</label>
+<input type="number" value="2">
+</div>
+
+<div class="input-group">
+<label>Desconto (%)</label>
+<input type="number" value="10">
+</div>
+
+<div class="total">Total: R$ 97,80</div>
+
+<button class="button btn-success">Dinheiro</button>
+<button class="button btn-primary">Cartão</button>
+<button class="button btn-warning">Finalizar Venda</button>
+
+</div>
+</div>
+
+
+<!-- CADASTRO PRODUTO -->
+<div class="phone">
+<div class="header">Cadastro de Produto</div>
+<div class="content">
+
+<div class="input-group">
+<label>Nome do Produto</label>
+<input type="text" value="Camiseta Básica">
+</div>
+
+<div class="input-group">
+<label>Categoria</label>
+<select>
+<option>Camisa</option>
+<option>Boné</option>
+<option>Shorts</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Preço de Custo</label>
+<input type="number" value="25.00">
+</div>
+
+<div class="input-group">
+<label>Preço de Venda</label>
+<input type="number" value="49.90">
+</div>
+
+<div class="input-group">
+<label>Quantidade em Estoque</label>
+<input type="number" value="15">
+</div>
+
+<button class="button btn-primary">Adicionar Foto</button>
+
+</div>
+</div>
+
+
+<!-- CADASTRO CLIENTE -->
+<div class="phone">
+<div class="header">Cadastro de Cliente</div>
+<div class="content">
+
+<div class="input-group">
+<label>Nome</label>
+<input type="text" value="João Silva">
+</div>
+
+<div class="input-group">
+<label>Telefone</label>
+<input type="text" value="(88) 99999-1234">
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" value="joao@email.com">
+</div>
+
+<div class="input-group">
+<label>Observações</label>
+<input type="text" value="Cliente VIP">
+</div>
+
+<button class="button btn-primary">Salvar Cliente</button>
+
+</div>
+</div>
+
+
+<!-- RELATÓRIOS -->
+<div class="phone">
+<div class="header">Relatórios</div>
+<div class="content">
+
+<div class="report-box">
+<span>Faturamento</span>
+<span>R$ 12.450</span>
+</div>
+
+<div class="report-box">
+<span>Despesas</span>
+<span>R$ 5.200</span>
+</div>
+
+<div class="report-box">
+<span>Lucro Líquido</span>
+<span>R$ 7.250</span>
+</div>
+
+<div class="report-box">
+<span>Vendas Realizadas</span>
+<span>120</span>
+</div>
+
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
