@@ -1,7 +1,8 @@
-import { DollarSign, TrendingDown, TrendingUp, ShoppingBag, Package, Users, Calendar, Edit2, Check, X, Plus, Trash2 } from 'lucide-react';
+import { DollarSign, TrendingDown, TrendingUp, ShoppingBag, Package, Users, Calendar, Edit2, Check, X, Plus, Trash2, FileDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db, Expense } from '../services/database';
 import { toast } from 'sonner';
+import { pdfService } from '../services/pdfService';
 
 type FilterType = 'today' | 'month' | 'year' | 'all';
 
@@ -189,10 +190,10 @@ export function Reports() {
             <h3 className="font-bold text-gray-900 text-lg mb-1">Período de Análise</h3>
             <p className="text-sm text-gray-600">{getFilterLabel()}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilter('today')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 text-sm rounded-lg font-medium transition-all ${
                 filter === 'today'
                   ? 'bg-[#0f4fa8] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -202,7 +203,7 @@ export function Reports() {
             </button>
             <button
               onClick={() => setFilter('month')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 text-sm rounded-lg font-medium transition-all ${
                 filter === 'month'
                   ? 'bg-[#0f4fa8] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -212,7 +213,7 @@ export function Reports() {
             </button>
             <button
               onClick={() => setFilter('year')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 text-sm rounded-lg font-medium transition-all ${
                 filter === 'year'
                   ? 'bg-[#0f4fa8] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -222,13 +223,29 @@ export function Reports() {
             </button>
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 text-sm rounded-lg font-medium transition-all ${
                 filter === 'all'
                   ? 'bg-[#0f4fa8] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Todos
+            </button>
+            <button
+              onClick={() => {
+                try {
+                  pdfService.generateCurrentMonthReport();
+                  toast.success('Relatório PDF gerado com sucesso!');
+                } catch (error) {
+                  toast.error('Erro ao gerar PDF');
+                  console.error(error);
+                }
+              }}
+              className="px-3 md:px-4 py-2 text-sm bg-[#27ae60] text-white rounded-lg font-medium hover:bg-[#229954] transition-all flex items-center gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              <span className="hidden md:inline">Exportar PDF</span>
+              <span className="md:hidden">PDF</span>
             </button>
           </div>
         </div>

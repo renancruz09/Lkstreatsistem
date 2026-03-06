@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Mail, Phone, Star, Trash2, ShoppingBag, Edit2, Check, X } from 'lucide-react';
+import { Mail, Phone, Star, Trash2, ShoppingBag, Edit2, Check, X, Search } from 'lucide-react';
 import { db, Customer } from '../services/database';
 
 export function CustomerRegister() {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editObservations, setEditObservations] = useState('');
   
@@ -20,10 +22,25 @@ export function CustomerRegister() {
     loadCustomers();
   }, []);
 
+  useEffect(() => {
+    // Filtrar clientes com base no termo de busca
+    if (searchTerm.trim() === '') {
+      setFilteredCustomers(customers);
+    } else {
+      const filtered = customers.filter(c =>
+        c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.telefone.includes(searchTerm) ||
+        (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredCustomers(filtered);
+    }
+  }, [searchTerm, customers]);
+
   const loadCustomers = () => {
     db.updateCustomerPurchaseCounts();
     const allCustomers = db.getAllCustomers();
     setCustomers(allCustomers);
+    setFilteredCustomers(allCustomers);
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -195,106 +212,124 @@ export function CustomerRegister() {
           </div>
           
           <div className="p-5 max-h-[600px] overflow-y-auto">
-            <div className="space-y-3">
-              {customers.map(customer => (
-                <div 
-                  key={customer.id}
-                  className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow relative"
-                >
-                  <button
-                    onClick={() => handleDelete(customer.id, customer.nome)}
-                    className="absolute top-3 right-3 p-2 hover:bg-red-50 rounded-lg transition-colors group"
-                    title="Excluir cliente"
-                  >
-                    <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-600" />
-                  </button>
+            {/* Barra de busca */}
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar cliente..."
+                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#27ae60]"
+                />
+              </div>
+            </div>
 
-                  <div className="flex justify-between items-start mb-3 pr-10">
-                    <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 bg-[#0f4fa8] rounded-full flex items-center justify-center text-white font-bold">
-                        {customer.nome.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900 flex items-center gap-1">
-                          {customer.nome}
-                          {customer.vip && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          {customer.vip && (
-                            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">
-                              VIP
-                            </span>
-                          )}
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
-                            <ShoppingBag className="w-3 h-3" />
-                            {customer.totalCompras || 0} compras
-                          </span>
+            <div className="space-y-3">
+              {filteredCustomers.length > 0 ? (
+                filteredCustomers.map(customer => (
+                  <div 
+                    key={customer.id}
+                    className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow relative"
+                  >
+                    <button
+                      onClick={() => handleDelete(customer.id, customer.nome)}
+                      className="absolute top-3 right-3 p-2 hover:bg-red-50 rounded-lg transition-colors group"
+                      title="Excluir cliente"
+                    >
+                      <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-600" />
+                    </button>
+
+                    <div className="flex justify-between items-start mb-3 pr-10">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 bg-[#0f4fa8] rounded-full flex items-center justify-center text-white font-bold">
+                          {customer.nome.charAt(0)}
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Phone className="w-4 h-4" />
-                      <span>{customer.telefone}</span>
-                    </div>
-                    
-                    {customer.email && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Mail className="w-4 h-4" />
-                        <span>{customer.email}</span>
-                      </div>
-                    )}
-                    
-                    <div className="mt-2 pt-2 border-t border-gray-100">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-700">Observações:</p>
-                        {editingId !== customer.id && (
-                          <button
-                            onClick={() => startEditObservations(customer)}
-                            className="text-blue-600 hover:text-blue-800"
-                            title="Editar observações"
-                          >
-                            <Edit2 className="w-3 h-3" />
-                          </button>
-                        )}
-                      </div>
-                      
-                      {editingId === customer.id ? (
-                        <div className="space-y-2">
-                          <textarea
-                            value={editObservations}
-                            onChange={(e) => setEditObservations(e.target.value)}
-                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#0f4fa8] resize-none"
-                            rows={3}
-                          />
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => saveObservations(customer.id)}
-                              className="flex-1 px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center justify-center gap-1"
-                            >
-                              <Check className="w-3 h-3" />
-                              Salvar
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="flex-1 px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 flex items-center justify-center gap-1"
-                            >
-                              <X className="w-3 h-3" />
-                              Cancelar
-                            </button>
+                        <div>
+                          <h4 className="font-bold text-gray-900 flex items-center gap-1">
+                            {customer.nome}
+                            {customer.vip && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            {customer.vip && (
+                              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">
+                                VIP
+                              </span>
+                            )}
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+                              <ShoppingBag className="w-3 h-3" />
+                              {customer.totalCompras || 0} compras
+                            </span>
                           </div>
                         </div>
-                      ) : (
-                        <p className="text-xs text-gray-500 italic">
-                          {customer.observacoes || 'Sem observações'}
-                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Phone className="w-4 h-4" />
+                        <span>{customer.telefone}</span>
+                      </div>
+                      
+                      {customer.email && (
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Mail className="w-4 h-4" />
+                          <span>{customer.email}</span>
+                        </div>
                       )}
+                      
+                      <div className="mt-2 pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs font-medium text-gray-700">Observações:</p>
+                          {editingId !== customer.id && (
+                            <button
+                              onClick={() => startEditObservations(customer)}
+                              className="text-blue-600 hover:text-blue-800"
+                              title="Editar observações"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                        
+                        {editingId === customer.id ? (
+                          <div className="space-y-2">
+                            <textarea
+                              value={editObservations}
+                              onChange={(e) => setEditObservations(e.target.value)}
+                              className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#0f4fa8] resize-none"
+                              rows={3}
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => saveObservations(customer.id)}
+                                className="flex-1 px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center justify-center gap-1"
+                              >
+                                <Check className="w-3 h-3" />
+                                Salvar
+                              </button>
+                              <button
+                                onClick={cancelEdit}
+                                className="flex-1 px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 flex items-center justify-center gap-1"
+                              >
+                                <X className="w-3 h-3" />
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-500 italic">
+                            {customer.observacoes || 'Sem observações'}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 text-center">Nenhum cliente encontrado.</p>
+              )}
             </div>
           </div>
         </div>
