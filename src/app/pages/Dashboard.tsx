@@ -2,15 +2,24 @@ import { DollarSign, TrendingDown, TrendingUp, ShoppingBag } from 'lucide-react'
 import { useEffect, useState } from 'react';
 import { db } from '../services/database';
 import { useNavigate } from 'react-router';
+import BackupPanel from '../components/BackupPanel'; // Importe o componente BackupPanel
+
+interface ReportState {
+  faturamento: number;
+  despesas: number;
+  lucro: number;
+  totalVendas: number;
+  topProdutos: { id: number; nome: string; quantidade: number }[];
+}
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const [report, setReport] = useState({
+  const [report, setReport] = useState<ReportState>({
     faturamento: 0,
     despesas: 0,
     lucro: 0,
     totalVendas: 0,
-    topProdutos: [] as { id: number; nome: string; quantidade: number }[]
+    topProdutos: []
   });
 
   useEffect(() => {
@@ -26,7 +35,7 @@ export function Dashboard() {
     db.updateCustomerPurchaseCounts();
     
     const report = db.getReport();
-    const todaySales = db.getSalesToday();
+    // const todaySales = db.getSalesToday(); // Esta linha não está sendo usada, pode ser removida se não for necessária
     setReport(report);
   };
   
@@ -99,6 +108,12 @@ export function Dashboard() {
           >
             Ver Relatório Completo
           </button>
+
+          {/* Adicione o componente BackupPanel aqui */}
+          <div className="mt-8">
+            <BackupPanel />
+          </div>
+
         </div>
       </div>
     </div>
